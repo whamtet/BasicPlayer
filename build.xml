@@ -24,6 +24,7 @@
         <pathelement location="${lib}/mp3spi1.9.4.jar"/>
         <pathelement location="${lib}/tritonus_share.jar"/>
         <pathelement location="${lib}/commons-logging-api.jar"/>
+      	<pathelement location="${lib}/jeq.jar"/>
       </classpath>
     </javac>
   </target>
