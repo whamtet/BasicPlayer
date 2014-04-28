@@ -681,8 +681,8 @@ public class BasicPlayer implements BasicController, Runnable
 	public void run()
 	{
 		log.info("Thread Running");
-		int nBytesRead = 1, nBytesRead2 = 1;
-		byte[] pcm = new byte[EXTERNAL_BUFFER_SIZE], pcm2 = new byte[EXTERNAL_BUFFER_SIZE];
+		int nBytesRead = 1;
+		byte[] pcm = new byte[EXTERNAL_BUFFER_SIZE];
 		// Lock stream while playing.
 		synchronized (m_audioInputStream)
 		{
@@ -695,6 +695,8 @@ public class BasicPlayer implements BasicController, Runnable
 					try
 					{
 						nBytesRead = m_audioInputStream.read(pcm, 0, pcm.length);
+						byte[] pcm2 = new byte[nBytesRead];
+						System.arraycopy(pcm, 0, pcm2, 0, nBytesRead);
 						if (nBytesRead >= 0)
 						{
 							pipedOutputStream.write(pcm, 0, nBytesRead);
@@ -711,9 +713,9 @@ public class BasicPlayer implements BasicController, Runnable
 								{
 									// Pass audio parameters such as instant bitrate, ...
 									Map properties = ((PropertiesContainer) m_audioInputStream).properties();
-									bpl.progress(nEncodedBytes, m_line.getMicrosecondPosition(), pcm, properties);
+									bpl.progress(nEncodedBytes, m_line.getMicrosecondPosition(), pcm2, properties);
 								}
-								else bpl.progress(nEncodedBytes, m_line.getMicrosecondPosition(), pcm, empty_map);
+								else bpl.progress(nEncodedBytes, m_line.getMicrosecondPosition(), pcm2, empty_map);
 							}
 						}
 					}
@@ -1129,7 +1131,14 @@ public class BasicPlayer implements BasicController, Runnable
 					m_line.write(pcm2, 0, nBytesRead2);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+//					e.printStackTrace();
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+						return;
+					}
 				}
 			}
 		}
